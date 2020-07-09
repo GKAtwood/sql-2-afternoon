@@ -200,22 +200,27 @@ products need a name and a price
 orders need a ref to product.
 All 3 need primary keys.
 
-create table users(
-user_id serial primary key,
-user_name varchar(40),
-email varchar(40)
+CREATE TABLE users
+(
+    id serial PRIMARY KEY,
+    name VARCHAR (100),
+    email VARCHAR (100)
 );
 
-create table product(
-product_id serial primary key,
-product_name varchar(30),
-product_price int
+CREATE TABLE products
+(
+    id serial PRIMARY KEY,
+    name VARCHAR (100),
+    price INTEGER
 );
 
-create table orders(
--- 	order_id serial primary key,
-    product_id int references product(product_id),
---   );
+CREATE TABLE orders
+(
+    id serial PRIMARY KEY,
+    user_id INT REFERENCES users (id),
+    product_id INT REFERENCES products (id) 
+);
+
 
 
 Get all products for the first order.
@@ -223,10 +228,50 @@ Get all orders.
 Get the total cost of an order ( sum the price of all products on an order ).
 
 select *
-from product
-where product_id in (select order_id from orders);
+from orders
+    JOIN products on orders.product_id = products.id
+WHERE orders.id = 1;
 
-select * from orders;
+select *
+from orders;
+
+select SUM(price)
+from orders
+    JOIN products on orders.product_id = products.id
+WHERE orders.id = 1;
+
+Add a foreign key reference from orders to users.
+Update the orders table to link a user to each order.
+Run queries against your data.
+Get all orders for a user.
+Get how many orders each user has.
+
+ALTER TABLE orders ADD FOREIGN KEY (fk_users)
+REFERENCES users(id);
+
+select *
+from orders
+JOIN users on orders.user_id = users.id;
+
+select *
+from orders, users, products
+
+select *
+from orders
+JOIN users on orders.user_id = users.id
+WHERE orders.id = 1;
+
+select count(*)
+from orders
+group by user_id;
+
+
+
+
+
+
+
+
 
 
 
